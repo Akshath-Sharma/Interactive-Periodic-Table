@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Periodic Table</title>
+    <style>
+        /* General Styling */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #e0f7fa;
+            color: #333;
+        }
+
+        h1 {
+            text-align: center;
+            color: #0277bd;
+        }
+
+        /* Tab Navigation Styling */
+        .tabs {
+            display: flex;
+            justify-content: center;
+            background-color: #0277bd;
+            padding: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .tab {
+            padding: 10px 20px;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            font-size: 16px;
+        }
+
+        .tab:hover {
+            background-color: #81d4fa;
+        }
+
+        .tab.active {
+            background-color: #0288d1;
+        }
+
+        /* Content Sections */
+        .content {
+            display: none;
+            padding: 20px;
+            background-color: #fff;
+            margin: 25px auto;
+            border-radius: 5px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            max-width: 1000px;
+        }
+
+        .content.active {
+            display: block;
+        }
+
+
+/* Periodic Table Layout */
+.table {
+    display: grid;
+    grid-template-columns: repeat(18, 1fr);
+    grid-gap: 5px;
+    max-width: 1200px;
+    margin: 22px auto;
+    padding: 10px;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    position: relative;
+}
+/* Lanthanides and Actinides Rows */
+.lanthanides, .actinides {
+    display: grid;
+    grid-template-columns: repeat(18, 1fr);
+    grid-gap: 5px;
+    max-width: 1200px;
+    margin: 10px auto;
+    padding: 10px;
+}
+
+/* Lanthanides and Actinides Background Colors */
+.lanthanides {
+    background-color: transparent; /* Ensure no background for the row itself */
+}
+
+.actinides {
+    background-color: transparent; /* Ensure no background for the row itself */
+}
+
+/* Additional Styling for Lanthanides and Actinides Elements */
+.lanthanides .element, .actinides .element {
+    border: 2px solid transparent;
+    padding: 10px;
+    font-size: 14px;
+    text-align: center;
+    cursor: pointer;
+    transition: transform 0.2s, background-color 0.2s, border-color 0.2s;
+    border-radius: 5px;
+}
+
+.lanthanides .element:hover, .actinides .element:hover {
+    transform: scale(1.1);
+    border-color: #0277bd;
+}
+
+/* General Element Styling */
+.element {
+    border: 2px solid transparent;
+    padding: 10px;
+    font-size: 14px;
+    text-align: center;
+    background-color: #b3e5fc;
+    color: #0277bd;
+    cursor: pointer;
+    transition: transform 0.2s, background-color 0.2s, border-color 0.2s;
+    border-radius: 5px;
+}
+
+.element:hover {
+    background-color: #81d4fa;
+    transform: scale(1.1);
+    border-color: #0277bd;
+}
+
+
+        /* Styling Each Element */
+        .element {
+            border: 2px solid transparent;
+            padding: 10px;
+            font-size: 14px;
+            text-align: center;
+            background-color: #b3e5fc;
+            color: #0277bd;
+            cursor: pointer;
+            transition: transform 0.2s, background-color 0.2s, border-color 0.2s;
+            border-radius: 5px;
+        }
+
+        /* Group-Based Color Coding */
+        .element[data-group="1"] { background-color: #ff7043; color: white; }  /* Alkali Metals */
+        .element[data-group="2"] { background-color: #ffb74d; color: white; }  /* Alkaline Earth Metals */
+        .element[data-group="17"] { background-color: #9e9e9e; color: white; }  /* Halogens */
+        .element[data-group="18"] { background-color: #81c784; color: white; }  /* Noble Gases */
+        .element[data-group="3"] { background-color: #64b5f6; color: white; }  /* Scandium (Transition Metals) */
+        .element[data-group="4"] { background-color: #64b5f6; color: white; }  /* Titanium (Transition Metals) */
+        .element[data-group="5"] { background-color: #64b5f6; color: white; }  /* Vanadium (Transition Metals) */
+        .element[data-group="6"] { background-color: #64b5f6; color: white; }  /* Chromium (Transition Metals) */
+        .element[data-group="7"] { background-color: #64b5f6; color: white; }  /* Manganese (Transition Metals) */
+        .element[data-group="8"] { background-color: #64b5f6; color: white; }  /* Iron (Transition Metals) */
+        .element[data-group="9"] { background-color: #64b5f6; color: white; }  /* Cobalt (Transition Metals) */
+        .element[data-group="10"] { background-color: #64b5f6; color: white; } /* Nickel (Transition Metals) */
+        .element[data-group="11"] { background-color: #64b5f6; color: white; } /* Copper (Transition Metals) */
+        .element[data-group="12"] { background-color: #64b5f6; color: white; } /* Zinc (Transition Metals) */
+        .element[data-group="13"] { background-color: #ffeb3b; color: black; }  /* Boron Group */
+        .element[data-group="14"] { background-color: #ffcc80; color: black; }  /* Carbon Group */
+        .element[data-group="15"] { background-color: #d32f2f; color: white; }  /* Nitrogen Group */
+        .element[data-group="16"] { background-color: #1976d2; color: white; }  /* Oxygen Group */
+        .element[data-group="11"] { background-color: #f06292; color: white; }  /* Transition Metals */
+        
+        .element:hover {
+            background-color: #81d4fa;
+            transform: scale(1.1);
+            border-color: #0277bd;
+        }
+
+/* Lanthanides Styling */
+.lanthanides .element {
+    background-color: #f06292 !important; /* Light Pink for Lanthanides */
+    color: white;
+    border: 2px solid transparent;
+    transition: background-color 0.2s, transform 0.2s, border-color 0.2s;
+}
+
+/* Hover Effect for Lanthanides */
+.lanthanides .element:hover {
+    background-color: #e91e63 !important; /* Darker Pink on Hover */
+    transform: scale(1.1);
+    border-color: #0277bd;
+}
+
+
+.actinides .element {
+    background-color: #ffeb3b !important; /* Yellow for Actinides */
+    color: black;
+}
+
+/* Hover Effect for All Elements */
+.element:hover {
+    background-color: #81d4fa;
+    transform: scale(1.1);
+    border-color: #0277bd;
+}
+
+.actinides .element:hover {
+    background-color: #ffc107 ; /* Darker yellow for Actinides on Hover */
+    border-color: #0288d1;
+}
+        /* Modal Styling */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.4);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            text-align: center;
+            position: relative;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .close {
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            font-size: 20px;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .close:hover {
+            color: #0277bd;
+        }
+    </style>
+</head>
+<body>
+    <h1>Interactive Periodic Table</h1>
+
+    <!-- Tab Navigation -->
+    <div class="tabs">
+        <div class="tab active" onclick="showTab('table-tab')">Periodic Table</div>
+        <div class="tab" onclick="showTab('info-tab')">Periodic Table Versions</div>
+        <div class="tab" onclick="showTab('types-tab')">Types of Elements</div>
+        <div class="tab" onclick="showTab('terms-tab')">General Terms</div>
+    </div>
+
+    <!-- Content Sections -->
+    <div class="content active" id="table-tab">
+        <div class="table" id="periodic-table"></div>
+        <!-- Lanthanides and Actinides Rows Below -->
+	<h2 class="subtitle">Lanthanides</h2>
+        <div class="lanthanides" id="lanthanides-row"></div>
+	<h2 class="subtitle">Actinides</h2>
+        <div class="actinides" id="actinides-row"></div>
+    </div>
+
+<div class="content" id="info-tab">
+    <h2>Periodic Table Versions</h2>
+    <p>The periodic table has evolved over time, with different scientists proposing various versions based on new discoveries and better understanding of atomic structure. Below is a more detailed history of the periodic table:</p>
+
+    <h3>1. Early Concepts and Foundations:</h3>
+    <ul>
+        <li><strong>Johann Wolfgang Döbereiner (1829):</strong> Döbereiner identified triads of elements with similar properties, such as chlorine, bromine, and iodine. This early grouping suggested that elements could be organized based on their chemical behavior.</li>
+        <li><strong>John Newlands (1864):</strong> Newlands' "Law of Octaves" was one of the first attempts to arrange elements in a regular pattern. He noticed that when arranged by increasing atomic mass, every eighth element exhibited similar properties. While the theory worked for lighter elements, it became less accurate for heavier ones.</li>
+        <li><strong>Alexis Thérèse Petit (1838):</strong> Proposed the idea that the atomic weight of an element could be used to predict the properties of other elements, influencing later models of the periodic table.</li>
+    </ul>
+
+    <h3>2. Mendeleev's Periodic Table (1869):</h3>
+    <p>Dmitri Mendeleev’s periodic table, developed in 1869, revolutionized the way scientists organized the elements. Some of his major contributions include:</p>
+    <ul>
+        <li><strong>Atomic Mass as a Guide:</strong> Mendeleev arranged the elements based on their increasing atomic mass, creating the first practical version of the periodic table.</li>
+        <li><strong>Periodic Law:</strong> Mendeleev noticed that when elements were arranged by atomic mass, their chemical properties repeated at regular intervals, leading to his formulation of the periodic law.</li>
+        <li><strong>Prediction of Missing Elements:</strong> Mendeleev left gaps in his table where elements were not yet discovered. Based on the properties of neighboring elements, he predicted the existence and properties of elements like gallium and germanium, which were later discovered and confirmed his predictions.</li>
+        <li><strong>Periodic Table as a Tool:</strong> Mendeleev’s table was a major leap forward, not only organizing known elements but also offering a roadmap for the discovery of new elements.</li>
+    </ul>
+
+    <h3>3. Moseley’s Refinement (1913):</h3>
+    <p>In 1913, Henry Moseley used X-ray diffraction techniques to measure the atomic number of elements, proving that the atomic number, not the atomic mass, should be the basis for organizing elements. This work resolved issues with Mendeleev’s table and provided a more accurate foundation for the periodic table. Some of his key contributions include:</p>
+    <ul>
+        <li><strong>Atomic Number:</strong> Moseley’s work showed that the atomic number corresponds to the number of protons in an atom’s nucleus, and should be used to order elements in the periodic table.</li>
+        <li><strong>Resolving Anomalies:</strong> By organizing elements based on atomic number, Moseley was able to fix inconsistencies in Mendeleev’s table, such as the placement of cobalt and nickel.</li>
+    </ul>
+
+    <h3>4. The Lanthanide and Actinide Series:</h3>
+    <ul>
+        <li><strong>Glenn T. Seaborg (1945):</strong> Seaborg's major contribution was the reorganization of the actinide series, placing the actinides below the lanthanides. His work helped define the f-block elements and the structure of the modern periodic table, including the lanthanides (elements 57-71) and actinides (elements 89-103).</li>
+        <li><strong>Seaborg’s Periodic Table (1945):</strong> Seaborg’s proposal led to the modern periodic table, where the actinides are placed in a separate row below the main body, making the periodic table more compact and easier to use.</li>
+    </ul>
+
+    <h3>5. Current Organization and Trends:</h3>
+    <ul>
+        <li><strong>Periodic Law and Grouping:</strong> Elements are organized in seven periods (rows) and 18 groups (columns), with each group having elements that share similar chemical properties. This layout reflects recurring trends in atomic structure and electron configuration.</li>
+        <li><strong>Transition Elements:</strong> The transition metals, found in groups 3-12, exhibit complex behavior due to their electron configurations. These elements are key to various chemical reactions and industrial processes.</li>
+        <li><strong>Metalloids:</strong> Elements such as silicon and arsenic that have properties intermediate between metals and non-metals are placed along the zig-zag line on the periodic table.</li>
+    </ul>
+
+    <h3>6. Future Directions and Innovations:</h3>
+    <p>With the discovery of new elements and advancements in quantum chemistry, the periodic table continues to evolve. Possible future developments include:</p>
+    <ul>
+        <li><strong>New Elements:</strong> The discovery of new elements beyond element 118 (oganesson) may require further modification of the periodic table. Researchers are constantly working to understand superheavy elements and their potential properties.</li>
+        <li><strong>Quantum and Theoretical Models:</strong> Advances in quantum physics may lead to new models that organize elements based on their quantum states, subatomic properties, or energy levels.</li>
+        <li><strong>Alternative Arrangements:</strong> Some scientists have proposed alternative ways of arranging the elements, such as based on their electron configurations, to give a more theoretical perspective on the behavior of elements.</li>
+    </ul>
+
+    <h3>7. Alternate Periodic Table Arrangements:</h3>
+    <p>While the current periodic table is widely used, scientists and educators have experimented with alternative layouts:</p>
+    <ul>
+        <li><strong>Spiral Periodic Table:</strong> This design places elements in a spiral pattern, showing the continuous, cyclical nature of their properties and atomic numbers. It emphasizes periodicity and atomic number in a visually striking way.</li>
+        <li><strong>3D Periodic Tables:</strong> Some have proposed three-dimensional periodic tables, where elements are placed along axes representing atomic number, electron configuration, and other atomic properties.</li>
+        <li><strong>Extended Periodic Tables:</strong> These tables extend the current system to accommodate the potential discovery of even more elements, organizing them in new ways to reflect their predicted properties and relationships.</li>
+    </ul>
+
+    <h3>8. The Periodic Table and Modern Science:</h3>
+    <p>The periodic table remains one of the most important tools in chemistry and materials science. It not only organizes elements but also reflects patterns that influence their chemical behavior. The periodic table continues to play a key role in:</p>
+    <ul>
+        <li><strong>Material Science:</strong> Understanding element properties helps in the development of new materials, such as semiconductors, superconductors, and advanced alloys.</li>
+        <li><strong>Environmental Chemistry:</strong> Knowledge of element interactions is critical in addressing environmental challenges such as pollution, climate change, and sustainable resource management.</li>
+        <li><strong>Biochemistry:</strong> The periodic table is central to understanding the role of elements in biological systems, from the metals in enzymes to the role of trace elements in human health.</li>
+    </ul>
+</div>
+
+<div class="content" id="types-tab">
+    <h2>Types of Elements</h2>
+    <p>Elements can be classified based on their physical and chemical properties. These classifications help to understand their behaviors, reactions, and uses. Below is a more detailed look at the different types of elements:</p>
+
+    <h3>1. Metals</h3>
+    <p>Metals are typically characterized by their ability to conduct heat and electricity, high melting and boiling points, and their malleability and ductility. They are found on the left side and center of the periodic table. Some key properties include:</p>
+    <ul>
+        <li><strong>Good Conductors:</strong> Metals are excellent conductors of heat and electricity. This is why metals like copper and aluminum are used in electrical wiring and cookware.</li>
+        <li><strong>Malleable and Ductile:</strong> Metals can be hammered into thin sheets (malleable) or drawn into wires (ductile), making them versatile for various industrial applications.</li>
+        <li><strong>High Density:</strong> Most metals have high density and are solid at room temperature (except mercury).</li>
+        <li><strong>Examples:</strong> Iron, Copper, Gold, Silver, Aluminum, Lead, Zinc.</li>
+    </ul>
+
+    <h3>2. Nonmetals</h3>
+    <p>Nonmetals are elements that are typically poor conductors of heat and electricity. They are found on the right side of the periodic table. They tend to be brittle in solid form and have lower melting and boiling points than metals. Key properties include:</p>
+    <ul>
+        <li><strong>Poor Conductors:</strong> Nonmetals are generally poor conductors of heat and electricity, which is why materials like rubber and plastic are used as insulators.</li>
+        <li><strong>Brittle:</strong> When nonmetals are in solid form, they are usually brittle and break easily. For example, carbon in the form of graphite or sulfur is brittle.</li>
+        <li><strong>Lower Density:</strong> Nonmetals generally have lower density than metals, with many being gases at room temperature.</li>
+        <li><strong>Examples:</strong> Oxygen, Nitrogen, Carbon, Phosphorus, Sulfur, Helium.</li>
+    </ul>
+
+    <h3>3. Metalloids</h3>
+    <p>Metalloids, also known as semimetals, exhibit properties that are intermediate between metals and nonmetals. They are found along the "staircase" line on the periodic table, which separates metals from nonmetals. Some important characteristics include:</p>
+    <ul>
+        <li><strong>Semiconductors:</strong> Metalloids like silicon and germanium are used in electronic devices because they conduct electricity better than nonmetals but not as well as metals.</li>
+        <li><strong>Mixed Properties:</strong> Metalloids can have some metallic properties, such as luster and conductivity, but are more brittle than metals and behave chemically more like nonmetals.</li>
+        <li><strong>Examples:</strong> Silicon, Boron, Arsenic, Antimony, Germanium, Tellurium.</li>
+    </ul>
+
+    <h3>4. Alkali Metals</h3>
+    <p>Alkali metals are a group of highly reactive metals found in Group 1 of the periodic table. They are characterized by their low melting points, low densities, and high reactivity, especially with water. Key properties include:</p>
+    <ul>
+        <li><strong>Highly Reactive:</strong> Alkali metals are very reactive, especially with water, producing hydrogen gas and hydroxides. This reactivity increases as you move down the group (e.g., sodium is less reactive than potassium).</li>
+        <li><strong>Soft and Light:</strong> Alkali metals are soft and can be cut with a knife. They also have low densities, with some like lithium floating on water.</li>
+        <li><strong>Flame Colors:</strong> Alkali metals produce distinct flame colors when burned. For example, lithium produces a red flame, sodium gives a bright yellow flame.</li>
+        <li><strong>Examples:</strong> Lithium (Li), Sodium (Na), Potassium (K), Rubidium (Rb), Cesium (Cs), Francium (Fr).</li>
+    </ul>
+
+    <h3>5. Alkaline Earth Metals</h3>
+    <p>The alkaline earth metals are found in Group 2 of the periodic table and are slightly less reactive than alkali metals. They have high melting points and are typically harder than alkali metals. Important characteristics include:</p>
+    <ul>
+        <li><strong>Reactive but Stable:</strong> While still reactive, alkaline earth metals do not react as violently with water as alkali metals. They readily form oxides and hydroxides.</li>
+        <li><strong>Higher Melting Points:</strong> Alkaline earth metals have higher melting points than alkali metals and are often used in alloys and materials that require strength and durability.</li>
+        <li><strong>Examples:</strong> Calcium (Ca), Magnesium (Mg), Beryllium (Be), Strontium (Sr), Barium (Ba), Radium (Ra).</li>
+    </ul>
+
+    <h3>6. Halogens</h3>
+    <p>Halogens are highly reactive nonmetals found in Group 17 of the periodic table. They readily form salts when combined with metals. Some key properties include:</p>
+    <ul>
+        <li><strong>Very Reactive:</strong> Halogens are among the most reactive elements. They readily form compounds with most metals and are used in disinfectants and industrial chemicals.</li>
+        <li><strong>Varied Physical States:</strong> The halogens exhibit all three physical states at room temperature: fluorine and chlorine are gases, bromine is a liquid, and iodine is a solid.</li>
+        <li><strong>Used in Disinfection:</strong> Chlorine and iodine are commonly used in disinfectants and antiseptics due to their strong reactivity and ability to kill bacteria and pathogens.</li>
+        <li><strong>Examples:</strong> Fluorine (F), Chlorine (Cl), Bromine (Br), Iodine (I), Astatine (At).</li>
+    </ul>
+
+    <h3>7. Noble Gases</h3>
+    <p>Noble gases are a group of elements in Group 18 of the periodic table. They are characterized by their chemical inertness, meaning they do not readily react with other elements. Key features include:</p>
+    <ul>
+        <li><strong>Inert or Unreactive:</strong> Noble gases are chemically inert because they have a full valence electron shell, making them stable and unlikely to form compounds under normal conditions.</li>
+        <li><strong>Colorless and Odorless:</strong> At room temperature, noble gases are colorless, odorless, and tasteless.</li>
+        <li><strong>Used in Lighting:</strong> Neon and argon are commonly used in lighting applications, such as neon signs and fluorescent lights.</li>
+        <li><strong>Examples:</strong> Helium (He), Neon (Ne), Argon (Ar), Krypton (Kr), Xenon (Xe), Radon (Rn).</li>
+    </ul>
+</div>
+
+
+<div class="content" id="terms-tab">
+    <h2>Common General Terms</h2>
+    <p>Here are some commonly used terms in chemistry and the periodic table:</p>
+    <ul>
+        <li><strong>Atomic Radius:</strong> The atomic radius refers to the size of an atom, measured as the distance from the nucleus to the outermost electron shell. As you move across a period from left to right, the atomic radius decreases due to the increase in nuclear charge, which pulls the electrons closer to the nucleus. As you move down a group from top to bottom, the atomic radius increases because additional electron shells are added, increasing the distance between the nucleus and the outer electrons. Atomic radius can also influence how atoms interact with other atoms during chemical reactions.</li>
+        
+        <li><strong>Ionization Energy:</strong> Ionization energy is the energy required to remove an electron from an atom or ion. It is a crucial property in determining how atoms interact with other atoms and form bonds. Ionization energy increases across a period as the nuclear charge increases and the electrons are held more tightly. Conversely, ionization energy decreases down a group because the outermost electrons are farther from the nucleus, and thus, are easier to remove. The first ionization energy refers to the energy required to remove the first electron, while successive ionization energies refer to the removal of additional electrons.</li>
+        
+        <li><strong>Electronegativity:</strong> Electronegativity is a measure of an atom’s ability to attract and bond with electrons in a chemical bond. Atoms with higher electronegativity tend to attract electrons more strongly. The electronegativity increases across a period because the increasing number of protons in the nucleus exerts a stronger pull on the electrons. It decreases down a group as the atomic radius increases and the added electron shells reduce the attraction of the nucleus for the bonding electrons. The difference in electronegativity between two atoms can determine the type of bond they will form (ionic, covalent, or polar covalent).</li>
+        
+        <li><strong>Electron Affinity:</strong> Electron affinity refers to the energy released or absorbed when an electron is added to a neutral atom in the gas phase. A more negative electron affinity indicates that the atom is more likely to accept an electron. Elements with high electron affinity values typically form negative ions more easily. The electron affinity becomes more negative across a period because atoms with more protons attract additional electrons more strongly. However, the electron affinity tends to be less negative as you move down a group due to increased distance between the nucleus and the added electron, which weakens the attraction.</li>
+        
+        <li><strong>Atomic Mass:</strong> Atomic mass is the weighted average mass of an element’s naturally occurring isotopes, based on their relative abundance. It is an important concept used in determining the mass of elements and compounds. The atomic mass is often close to the mass number of the most abundant isotope, but it accounts for the presence of isotopes with slightly different masses. The atomic mass is expressed in atomic mass units (amu), where 1 amu is defined as one twelfth of the mass of a carbon-12 atom. The atomic mass of elements is usually listed on the periodic table as a decimal because of this weighted average.</li>
+        
+        <li><strong>Electropositivity:</strong> Electropositivity is the tendency of an atom to lose an electron and form a positive ion (cation). Elements with high electropositivity, such as alkali metals, easily lose electrons and form cations. Electropositivity increases as you move down a group because the outermost electrons are farther from the nucleus and are more easily lost. Conversely, it decreases across a period because the nuclear charge increases, pulling the electrons closer to the nucleus and making them harder to remove.</li>
+        
+        <li><strong>Shielding Effect:</strong> The shielding effect describes the phenomenon where inner electron shells partially block the attraction of the nucleus for the outermost (valence) electrons. This shielding weakens the effective nuclear charge felt by the valence electrons, making them easier to remove. As the number of inner electron shells increases, the shielding effect becomes stronger, which explains why ionization energy decreases down a group. The shielding effect plays an important role in determining trends in atomic radius, ionization energy, and electronegativity.</li>
+        
+        <li><strong>Valence Electrons:</strong> Valence electrons are the electrons in the outermost shell of an atom that are involved in forming chemical bonds. The number of valence electrons determines an atom's chemical properties and its ability to bond with other atoms. Atoms in the same group of the periodic table have the same number of valence electrons, which is why elements within a group tend to have similar chemical behaviors. For example, the alkali metals in Group 1 all have one valence electron, which makes them highly reactive and prone to losing that electron to form positive ions.</li>
+        
+        <li><strong>Oxidation States:</strong> The oxidation state (or oxidation number) of an element indicates the number of electrons it has gained, lost, or shared in a chemical reaction. It is a key concept in understanding redox reactions, where one atom is oxidized (loses electrons) and another is reduced (gains electrons). The oxidation state can be positive or negative depending on whether an atom loses or gains electrons. For example, in NaCl, sodium has an oxidation state of +1 (it loses one electron), while chlorine has an oxidation state of -1 (it gains one electron). Transition metals can have multiple oxidation states, which makes them versatile in forming compounds.</li>
+        
+        <li><strong>Covalent Radius:</strong> The covalent radius is half the distance between two identical atoms that are bonded together in a molecule. It provides a measure of the size of an atom when it is covalently bonded to another atom. The covalent radius tends to decrease across a period because of the increased nuclear charge, which pulls the electrons closer to the nucleus. It tends to increase down a group due to the addition of electron shells, which results in a greater distance between the nucleus and the outer electrons.</li>
+        
+        <li><strong>Electrolyte:</strong> An electrolyte is a substance that, when dissolved in water or melted, produces ions and can conduct electricity. Electrolytes are essential for many biological functions, such as nerve conduction, muscle contractions, and maintaining fluid balance in cells. Strong electrolytes, such as sodium chloride (NaCl), completely dissociate into ions in solution, whereas weak electrolytes, such as acetic acid (CH₃COOH), only partially dissociate. Electrolytes are categorized into strong and weak based on their dissociation ability and the number of ions they produce in solution.</li>
+    </ul>
+</div>
+
+
+    <!-- Modal for Element Details -->
+    <div class="modal" id="modal">
+        <div class="modal-content">
+            <span class="close" id="close-modal">&times;</span>
+            <h2 id="element-name"></h2>
+            <p id="element-info"></p>
+            <button class="close-btn" onclick="closeDetails()">Close</button>
+        </div>
+    </div>
+
+    <script>
+        // Periodic Table Data
+        const elements = [
+    { symbol: "H", name: "Hydrogen", number: 1, group: 1, period: 1,info: "Hydrogen is the first element. Most important element"},
+    { symbol: "He", name: "Helium", number: 2, group: 18, period: 1, info: "Helium is a noble gas." },
+    { symbol: "Li", name: "Lithium", number: 3, group: 1, period: 2, info: "Lithium is an alkali metal." },
+    { symbol: "Be", name: "Beryllium", number: 4, group: 2, period: 2, info: "Beryllium is an alkaline earth metal." },
+    { symbol: "B", name: "Boron", number: 5, group: 13, period: 2, info: "Boron is a metalloid." },
+    { symbol: "C", name: "Carbon", number: 6, group: 14, period: 2, info: "Carbon is a nonmetal." },
+    { symbol: "N", name: "Nitrogen", number: 7, group: 15, period: 2, info: "Nitrogen is a nonmetal." },
+    { symbol: "O", name: "Oxygen", number: 8, group: 16, period: 2, info: "Oxygen is a nonmetal." },
+    { symbol: "F", name: "Fluorine", number: 9, group: 17, period: 2, info: "Fluorine is a halogen." },
+    { symbol: "Ne", name: "Neon", number: 10, group: 18, period: 2, info: "Neon is a noble gas." },
+    { symbol: "Na", name: "Sodium", number: 11, group: 1, period: 3, info: "Sodium is an alkali metal." },
+    { symbol: "Mg", name: "Magnesium", number: 12, group: 2, period: 3, info: "Magnesium is an alkaline earth metal." },
+    { symbol: "Al", name: "Aluminum", number: 13, group: 13, period: 3, info: "Aluminum is a metal." },
+    { symbol: "Si", name: "Silicon", number: 14, group: 14, period: 3, info: "Silicon is a metalloid." },
+    { symbol: "P", name: "Phosphorus", number: 15, group: 15, period: 3, info: "Phosphorus is a nonmetal." },
+    { symbol: "S", name: "Sulfur", number: 16, group: 16, period: 3, info: "Sulfur is a nonmetal." },
+    { symbol: "Cl", name: "Chlorine", number: 17, group: 17, period: 3, info: "Chlorine is a halogen." },
+    { symbol: "Ar", name: "Argon", number: 18, group: 18, period: 3, info: "Argon is a noble gas." },
+    { symbol: "K", name: "Potassium", number: 19, group: 1, period: 4, info: "Potassium is an alkali metal." },
+    { symbol: "Ca", name: "Calcium", number: 20, group: 2, period: 4, info: "Calcium is an alkaline earth metal." },
+    { symbol: "Sc", name: "Scandium", number: 21, group: 3, period: 4, info: "Scandium is a transition metal." },
+    { symbol: "Ti", name: "Titanium", number: 22, group: 4, period: 4, info: "Titanium is a transition metal." },
+    { symbol: "V", name: "Vanadium", number: 23, group: 5, period: 4, info: "Vanadium is a transition metal." },
+    { symbol: "Cr", name: "Chromium", number: 24, group: 6, period: 4, info: "Chromium is a transition metal." },
+    { symbol: "Mn", name: "Manganese", number: 25, group: 7, period: 4, info: "Manganese is a transition metal." },
+    { symbol: "Fe", name: "Iron", number: 26, group: 8, period: 4, info: "Iron is a transition metal." },
+    { symbol: "Co", name: "Cobalt", number: 27, group: 9, period: 4, info: "Cobalt is a transition metal." },
+    { symbol: "Ni", name: "Nickel", number: 28, group: 10, period: 4, info: "Nickel is a transition metal." },
+    { symbol: "Cu", name: "Copper", number: 29, group: 11, period: 4, info: "Copper is a transition metal." },
+    { symbol: "Zn", name: "Zinc", number: 30, group: 12, period: 4, info: "Zinc is a transition metal." },
+    { symbol: "Ga", name: "Gallium", number: 31, group: 13, period: 4, info: "Gallium is a metal." },
+    { symbol: "Ge", name: "Germanium", number: 32, group: 14, period: 4, info: "Germanium is a metalloid." },
+    { symbol: "As", name: "Arsenic", number: 33, group: 15, period: 4, info: "Arsenic is a metalloid." },
+    { symbol: "Se", name: "Selenium", number: 34, group: 16, period: 4, info: "Selenium is a nonmetal." },
+    { symbol: "Br", name: "Bromine", number: 35, group: 17, period: 4, info: "Bromine is a halogen." },
+    { symbol: "Kr", name: "Krypton", number: 36, group: 18, period: 4, info: "Krypton is a noble gas." },
+    { symbol: "Rb", name: "Rubidium", number: 37, group: 1, period: 5, info: "Rubidium is an alkali metal." },
+    { symbol: "Sr", name: "Strontium", number: 38, group: 2, period: 5, info: "Strontium is an alkaline earth metal." },
+    { symbol: "Y", name: "Yttrium", number: 39, group: 3, period: 5, info: "Yttrium is a transition metal." },
+    { symbol: "Zr", name: "Zirconium", number: 40, group: 4, period: 5, info: "Zirconium is a transition metal." },
+    { symbol: "Nb", name: "Niobium", number: 41, group: 5, period: 5, info: "Niobium is a transition metal." },
+    { symbol: "Mo", name: "Molybdenum", number: 42, group: 6, period: 5, info: "Molybdenum is a transition metal." },
+    { symbol: "Tc", name: "Technetium", number: 43, group: 7, period: 5, info: "Technetium is a transition metal." },
+    { symbol: "Ru", name: "Ruthenium", number: 44, group: 8, period: 5, info: "Ruthenium is a transition metal." },
+    { symbol: "Rh", name: "Rhodium", number: 45, group: 9, period: 5, info: "Rhodium is a transition metal." },
+    { symbol: "Pd", name: "Palladium", number: 46, group: 10, period: 5, info: "Palladium is a transition metal." },
+    { symbol: "Ag", name: "Silver", number: 47, group: 11, period: 5, info: "Silver is a transition metal." },
+    { symbol: "Cd", name: "Cadmium", number: 48, group: 12, period: 5, info: "Cadmium is a transition metal." },
+    { symbol: "In", name: "Indium", number: 49, group: 13, period: 5, info: "Indium is a metal." },
+    { symbol: "Sn", name: "Tin", number: 50, group: 14, period: 5, info: "Tin is a metal." },
+    { symbol: "Sb", name: "Antimony", number: 51, group: 15, period: 5, info: "Antimony is a metalloid." },
+    { symbol: "Te", name: "Tellurium", number: 52, group: 16, period: 5, info: "rare,brittle,silver-white,metalloids." },
+    { symbol: "I", name: "Iodine", number: 53, group: 17, period: 5, info: "Iodine is a halogen." },
+    { symbol: "Xe", name: "Xenon", number: 54, group: 18, period: 5, info: "Xenon is a noble gas." },
+    { symbol: "Cs", name: "Cesium", number: 55, group: 1, period: 6, info: "Cesium is an alkali metal." },
+    { symbol: "Ba", name: "Barium", number: 56, group: 2, period: 6, info: "Barium is an alkaline earth metal." },
+    { symbol: "La", name: "Lanthanum", number: 57, group: 3, period: 6, info: "Lanthanum is a lanthanide." },
+    { symbol: "Ce", name: "Cerium", number: 58, group: 3, period: 6, info: "Cerium is a lanthanide." },
+    { symbol: "Pr", name: "Praseodymium", number: 59, group: 3, period: 6, info: "Praseodymium is a lanthanide." },
+    { symbol: "Nd", name: "Neodymium", number: 60, group: 3, period: 6, info: "Neodymium is a lanthanide." },
+    { symbol: "Pm", name: "Promethium", number: 61, group: 3, period: 6, info: "Promethium is a lanthanide." },
+    { symbol: "Sm", name: "Samarium", number: 62, group: 3, period: 6, info: "Samarium is a lanthanide." },
+    { symbol: "Eu", name: "Europium", number: 63, group: 3, period: 6, info: "Europium is a lanthanide." },
+    { symbol: "Gd", name: "Gadolinium", number: 64, group: 3, period: 6, info: "Gadolinium is a lanthanide." },
+    { symbol: "Tb", name: "Terbium", number: 65, group: 3, period: 6, info: "Terbium is a lanthanide." },
+    { symbol: "Dy", name: "Dysprosium", number: 66, group: 3, period: 6, info: "Dysprosium is a lanthanide." },
+    { symbol: "Ho", name: "Holmium", number: 67, group: 3, period: 6, info: "Holmium is a lanthanide." },
+    { symbol: "Er", name: "Erbium", number: 68, group: 3, period: 6, info: "Erbium is a lanthanide." },
+    { symbol: "Tm", name: "Thulium", number: 69, group: 3, period: 6, info: "Thulium is a lanthanide." },
+    { symbol: "Yb", name: "Ytterbium", number: 70, group: 3, period: 6, info: "Ytterbium is a lanthanide." },
+    { symbol: "Lu", name: "Lutetium", number: 71, group: 3, period: 6, info: "Lutetium is a lanthanide." },
+    { symbol: "Hf", name: "Hafnium", number: 72, group: 4, period: 6, info: "Hafnium is a transition metal." },
+    { symbol: "Ta", name: "Tantalum", number: 73, group: 5, period: 6, info: "Tantalum is a transition metal." },
+    { symbol: "W", name: "Tungsten", number: 74, group: 6, period: 6, info: "Tungsten is a transition metal." },
+    { symbol: "Re", name: "Rhenium", number: 75, group: 7, period: 6, info: "Rhenium is a transition metal." },
+    { symbol: "Os", name: "Osmium", number: 76, group: 8, period: 6, info: "Osmium is a transition metal." },
+    { symbol: "Ir", name: "Iridium", number: 77, group: 9, period: 6, info: "Iridium is a transition metal." },
+    { symbol: "Pt", name: "Platinum", number: 78, group: 10, period: 6, info: "Platinum is a transition metal." },
+    { symbol: "Au", name: "Gold", number: 79, group: 11, period: 6, info: "Gold is a transition metal." },
+    { symbol: "Hg", name: "Mercury", number: 80, group: 12, period: 6, info: "Mercury is a transition metal." },
+    { symbol: "Tl", name: "Thallium", number: 81, group: 13, period: 6, info: "Thallium is a metal." },
+    { symbol: "Pb", name: "Lead", number: 82, group: 14, period: 6, info: "Lead is a metal." },
+    { symbol: "Bi", name: "Bismuth", number: 83, group: 15, period: 6, info: "Bismuth is a metal." },
+    { symbol: "Po", name: "Polonium", number: 84, group: 16, period: 6, info: "Polonium is a metalloid." },
+    { symbol: "At", name: "Astatine", number: 85, group: 17, period: 6, info: "Astatine is a halogen." },
+    { symbol: "Rn", name: "Radon", number: 86, group: 18, period: 6, info: "Radon is a noble gas." },
+    { symbol: "Fr", name: "Francium", number: 87, group: 1, period: 7, info: "Francium is an alkali metal." },
+    { symbol: "Ra", name: "Radium", number: 88, group: 2, period: 7, info: "Radium is an alkaline earth metal." },
+    { symbol: "Ac", name: "Actinium", number: 89, group: 3, period: 7, info: "Actinium is an actinide." },
+    { symbol: "Th", name: "Thorium", number: 90, group: 3, period: 7, info: "Thorium is an actinide." },
+    { symbol: "Pa", name: "Protactinium", number: 91, group: 3, period: 7, info: "Protactinium is an actinide." },
+    { symbol: "U", name: "Uranium", number: 92, group: 3, period: 7, info: "Uranium is an actinide." },
+    { symbol: "Np", name: "Neptunium", number: 93, group: 3, period: 7, info: "Neptunium is an actinide." },
+    { symbol: "Pu", name: "Plutonium", number: 94, group: 3, period: 7, info: "Plutonium is an actinide." },
+    { symbol: "Am", name: "Americium", number: 95, group: 3, period: 7, info: "Americium is an actinide." },
+    { symbol: "Cm", name: "Curium", number: 96, group: 3, period: 7, info: "Curium is an actinide." },
+    { symbol: "Bk", name: "Berkelium", number: 97, group: 3, period: 7, info: "Berkelium is an actinide." },
+    { symbol: "Cf", name: "Californium", number: 98, group: 3, period: 7, info: "Californium is an actinide." },
+    { symbol: "Es", name: "Einsteinium", number: 99, group: 3, period: 7, info: "Einsteinium is an actinide." },
+    { symbol: "Fm", name: "Fermium", number: 100, group: 3, period: 7, info: "Fermium is an actinide." },
+    { symbol: "Md", name: "Mendelevium", number: 101, group: 3, period: 7, info: "Mendelevium is an actinide." },
+    { symbol: "No", name: "Nobelium", number: 102, group: 3, period: 7, info: "Nobelium is an actinide." },
+    { symbol: "Lr", name: "Lawrencium", number: 103, group: 3, period: 7, info: "Lawrencium is an actinide." },
+    { symbol: "Rf", name: "Rutherfordium", number: 104, group: 4, period: 7, info: "Rutherfordium is a transition metal." },
+    { symbol: "Db", name: "Dubnium", number: 105, group: 5, period: 7, info: "Dubnium is a transition metal." },
+    { symbol: "Sg", name: "Seaborgium", number: 106, group: 6, period: 7, info: "Seaborgium is a transition metal." },
+    { symbol: "Bh", name: "Bohrium", number: 107, group: 7, period: 7, info: "Bohrium is a transition metal." },
+    { symbol: "Hs", name: "Hassium", number: 108, group: 8, period: 7, info: "Hassium is a transition metal." },
+    { symbol: "Mt", name: "Meitnerium", number: 109, group: 9, period: 7, info: "Meitnerium is a transition metal." },
+    { symbol: "Ds", name: "Darmstadtium", number: 110, group: 10, period: 7, info: "Darmstadtium is a transition metal." },
+    { symbol: "Rg", name: "Roentgenium", number: 111, group: 11, period: 7, info: "Roentgenium is a transition metal." },
+    { symbol: "Cn", name: "Copernicium", number: 112, group: 12, period: 7, info: "Copernicium is a transition metal." },
+    { symbol: "Nh", name: "Nihonium", number: 113, group: 13, period: 7, info: "Nihonium is a metal." },
+    { symbol: "Fl", name: "Flerovium", number: 114, group: 14, period: 7, info: "Flerovium is a metal." },
+    { symbol: "Mc", name: "Moscovium", number: 115, group: 15, period: 7, info: "Moscovium is a metal." },
+    { symbol: "Lv", name: "Livermorium", number: 116, group: 16, period: 7, info: "Livermorium is a metal." },
+    { symbol: "Ts", name: "Tennessine", number: 117, group: 17, period: 7, info: "Tennessine is a halogen." },
+    { symbol: "Og", name: "Oganesson", number: 118, group: 18, period: 7, info: "Oganesson is a noble gas." }
+        ];
+
+        const table = document.getElementById("periodic-table");
+        const lanthanidesRow = document.getElementById("lanthanides-row");
+        const actinidesRow = document.getElementById("actinides-row");
+
+        // Populate the Periodic Table
+        elements.forEach(element => {
+            const div = document.createElement("div");
+            div.className = "element";
+            div.style.gridColumn = element.group;
+            div.style.gridRow = element.period;
+            div.dataset.group = element.group;
+            div.dataset.name = element.name;
+            div.dataset.symbol = element.symbol;
+            div.dataset.number = element.number;
+            div.dataset.info = element.info;
+            div.innerHTML = `${element.symbol}<br>${element.number}`;
+            div.onclick = () => showDetails(element);
+            table.appendChild(div);
+        });
+// Populate Lanthanides and Actinides (for example)
+const lanthanides = [
+    { symbol: "La", name: "Lanthanum", number: 57, group: 3, period: 6, info: "Lanthanum is a lanthanide." },
+    { symbol: "Ce", name: "Cerium", number: 58, group: 4, period: 6, info: "Cerium is a lanthanide." },
+    { symbol: "Pr", name: "Praseodymium", number: 59, group: 5, period: 6, info: "Praseodymium is a lanthanide." },
+    { symbol: "Nd", name: "Neodymium", number: 60, group: 6, period: 6, info: "Neodymium is a lanthanide." },
+    { symbol: "Pm", name: "Promethium", number: 61, group: 7, period: 6, info: "Promethium is a lanthanide." },
+    { symbol: "Sm", name: "Samarium", number: 62, group: 8, period: 6, info: "Samarium is a lanthanide." },
+    { symbol: "Eu", name: "Europium", number: 63, group: 9, period: 6, info: "Europium is a lanthanide." },
+    { symbol: "Gd", name: "Gadolinium", number: 64, group: 10, period: 6, info: "Gadolinium is a lanthanide." },
+    { symbol: "Tb", name: "Terbium", number: 65, group: 11, period: 6, info: "Terbium is a lanthanide." },
+    { symbol: "Dy", name: "Dysprosium", number: 66, group: 12, period: 6, info: "Dysprosium is a lanthanide." },
+    { symbol: "Ho", name: "Holmium", number: 67, group: 13, period: 6, info: "Holmium is a lanthanide." },
+    { symbol: "Er", name: "Erbium", number: 68, group: 14, period: 6, info: "Erbium is a lanthanide." },
+    { symbol: "Tm", name: "Thulium", number: 69, group: 15, period: 6, info: "Thulium is a lanthanide." },
+    { symbol: "Yb", name: "Ytterbium", number: 70, group: 16, period: 6, info: "Ytterbium is a lanthanide." },
+    { symbol: "Lu", name: "Lutetium", number: 71, group: 17, period: 6, info: "Lutetium is a lanthanide." }
+];
+const actinides = [
+    { symbol: "Ac", name: "Actinium", number: 89, group: 3, period: 7, info: "Actinium is an actinide." },
+    { symbol: "Th", name: "Thorium", number: 90, group: 4, period: 7, info: "Thorium is an actinide." },
+    { symbol: "Pa", name: "Protactinium", number: 91, group: 5, period: 7, info: "Protactinium is an actinide." },
+    { symbol: "U", name: "Uranium", number: 92, group: 6, period: 7, info: "Uranium is an actinide." },
+    { symbol: "Np", name: "Neptunium", number: 93, group: 7, period: 7, info: "Neptunium is an actinide." },
+    { symbol: "Pu", name: "Plutonium", number: 94, group: 8, period: 7, info: "Plutonium is an actinide." },
+    { symbol: "Am", name: "Americium", number: 95, group: 9, period: 7, info: "Americium is an actinide." },
+    { symbol: "Cm", name: "Curium", number: 96, group: 10, period: 7, info: "Curium is an actinide." },
+    { symbol: "Bk", name: "Berkelium", number: 97, group: 11, period: 7, info: "Berkelium is an actinide." },
+    { symbol: "Cf", name: "Californium", number: 98, group: 12, period: 7, info: "Californium is an actinide." },
+    { symbol: "Es", name: "Einsteinium", number: 99, group: 13, period: 7, info: "Einsteinium is an actinide." },
+    { symbol: "Fm", name: "Fermium", number: 100, group: 14, period: 7, info: "Fermium is an actinide." },
+    { symbol: "Md", name: "Mendelevium", number: 101, group: 15, period: 7, info: "Mendelevium is an actinide." },
+    { symbol: "No", name: "Nobelium", number: 102, group: 16, period: 7, info: "Nobelium is an actinide." },
+    { symbol: "Lr", name: "Lawrencium", number: 103, group: 17, period: 7, info: "Lawrencium is an actinide." }
+];
+
+lanthanides.forEach(element => {
+    const div = document.createElement("div");
+    div.className = "element";
+    div.style.gridColumn = element.group;  // Ensure correct grid column
+    div.style.gridRow = 7;  // Lanthanides row (row 7)
+    div.dataset.group = element.group;
+    div.dataset.name = element.name;
+    div.dataset.symbol = element.symbol;
+    div.dataset.number = element.number;
+    div.dataset.info = element.info;
+    div.innerHTML = `${element.symbol}<br>${element.number}`;
+    div.onclick = () => showDetails(element);
+    lanthanidesRow.appendChild(div);
+});
+
+actinides.forEach(element => {
+    const div = document.createElement("div");
+    div.className = "element";
+    div.style.gridColumn = element.group;  // Ensure correct grid column
+    div.style.gridRow = 8;  // Actinides row (row 8)
+    div.dataset.group = element.group;
+    div.dataset.name = element.name;
+    div.dataset.symbol = element.symbol;
+    div.dataset.number = element.number;
+    div.dataset.info = element.info;
+    div.innerHTML = `${element.symbol}<br>${element.number}`;
+    div.onclick = () => showDetails(element);
+    actinidesRow.appendChild(div);
+});
+
+
+        // Show Element Details in Modal
+        function showDetails(element) {
+            const modal = document.getElementById("modal");
+            const elementName = document.getElementById("element-name");
+            const elementInfo = document.getElementById("element-info");
+            modal.style.display = "flex";
+            elementName.textContent = `${element.name} (${element.symbol})`;
+            elementInfo.textContent = element.info;
+        }
+
+        // Close Modal
+        document.getElementById("close-modal").onclick = () => {
+            document.getElementById("modal").style.display = "none";
+        };
+
+        window.onclick = (event) => {
+            if (event.target === document.getElementById("modal")) {
+                document.getElementById("modal").style.display = "none";
+            }
+        };
+
+        // Show Tab Content
+        function showTab(tabId) {
+            const tabs = document.querySelectorAll('.tab');
+            const contents = document.querySelectorAll('.content');
+
+            tabs.forEach(tab => tab.classList.remove('active'));
+            contents.forEach(content => content.classList.remove('active'));
+
+            document.getElementById(tabId).classList.add('active');
+            document.querySelector(`.tab[onclick="showTab('${tabId}')"]`).classList.add('active');
+        }
+    </script>
+</body>
+</html>
