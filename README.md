@@ -1,6 +1,6 @@
 Comprehensive README: The Periodic Table
 
-Check out our website here:
+Check out our website here:<a href="https://Akshath-Sharma.github.io/Interactive-Periodic-Table/">Interactive Periodic Website</a>
 
 Introduction
 
