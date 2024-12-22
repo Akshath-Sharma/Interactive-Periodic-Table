@@ -94,8 +94,13 @@ IUPAC Periodic Table (Official Site).
 
 
 **Author**
+
 Akshath Sharma
+
 **Teammates**
+
 Akshath Sharma
+
 Himanshu Nath Tripathi 
+
 Krrish Ambwani
